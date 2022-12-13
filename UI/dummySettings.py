@@ -1,0 +1,1 @@
+DUMMYLOC = r"C:\Users\Claymore-3950X\Desktop\Portfolio_Content\Code\Scrap_code_from_SM\UI\testImage.png"
