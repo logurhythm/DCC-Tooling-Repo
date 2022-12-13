@@ -1,0 +1,41 @@
+/*The below is a set of routines to test an autoload script for Zbrush. It is 1 of 3 routines that
+May be merged into a single routine, to automate loading in a series of 3D meshes from CT scan, decimating them
+with dynamesh, Z Remeshing with a set amount of topology and then exporting them to another folder
+
+Below is the load routine */
+
+[VarDef,RetopoFolderLoc,"C:\Users\inworks\Documents\RetopoFolder"]//declare this variable
+
+
+[IButton,"Import OBJ File","Import an OBJ file from disk",
+	[If,[FileExists,"RetopoFolderLoc.zvr"],//OK we have our path file
+		[VarLoad,RetopoFolderLoc,"RetopoFolderLoc.zvr"]
+		[VarSet,fileName,[StrMerge,RetopoFolderLoc,"test.obj"]]
+	,//else no file path stored so select a file
+		[VarSet,fileName,[FileNameAsk,"OBJ(*.obj)|*.OBJ||", ,"Please Select File..."]]
+		[If,[StrLength,fileName],//if the user didn't cancel
+			[VarSet,RetopoFolderLoc,[FileNameExtract,fileName,1]]//get the path so we can save it
+			[VarSave,RetopoFolderLoc,"RetopoFolderLoc.zvr"]//save the path variable
+			,//else
+			[Exit]//no file selected so exit zscript
+		]
+	]
+	[If,[FileExists,fileName],
+		//OK we have a file
+		[Note,"File exists so we can attempt to import"]
+		,//else no file
+		[Note,"File does not exist"]
+		[Exit]
+	]
+	[FileNameSetNext,fileName]
+	[If,[FileNameHasNext],
+		//OK we have set the next file
+		[Note,"Next File has been set OK"]
+		,//else some sort of error
+		[Note,"Error - file has not been set"]
+		[Exit]
+	]
+	[IPress,Tool:Import]
+]
+    
+
