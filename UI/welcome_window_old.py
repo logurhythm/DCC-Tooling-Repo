@@ -2,10 +2,10 @@ import sys
 import subprocess
 from PyQt5.QtWidgets import QWidget, QApplication, QFrame, QSplitter, QTextBrowser, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, QFileDialog, QLabel
 from PyQt5.QtGui import QImage, QPixmap, QDesktopServices, QPalette
-from PyQt5.QtCore import QRect
+from PyQt5.QtCore import QRect, Qt
 import qdarkstyle
+import dummySettings as ds
 import cv2
-import settings
 
 
 class WelcomeWindow(QWidget):
@@ -14,13 +14,13 @@ class WelcomeWindow(QWidget):
 
             super(WelcomeWindow, self).__init__()
             self.setWindowTitle("The Collector")
-            appImage = self.show_image(settings.small_icon_path)
+            appImage = self.show_image(ds.DUMMYLOC)
             menuFrame = QFrame()
             self.setFixedSize(450, 300)
             
             label4 = QLabel(self)
             label4.setOpenExternalLinks(True)
-            label4.setText("<a href=" + settings.help_path + ">Help</a>")
+            label4.setText("<a href=" + ds.DUMMYLOC + ">Help</a>")
             label4.setAlignment(Qt.AlignBottom)
             label4.setToolTip('Collector Design Documentation')
 
