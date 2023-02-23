@@ -271,14 +271,20 @@ class LogsToolBag():
             cmds.setAttr(objects+".visibility", 0)
         for objects in selected_objects:
             cmds.setAttr(objects+".visibility", 1)
+    batch_playblast()
 
+    def autosave_prefix_name_remover():
+        """
+        Takes list of selected objects from the outliner and parses from for the prefix append, like when maya crashes or autosaves and you load it into a new scene.
+        This is still fairly manual, need to provide a input box for the user to specificy the prefix.
 
-        #Autosave name remover    
+        """    
         renameList = cmds.ls(selection = True)
         for names in renameList:
             print(names)
             if "ReImport:" in names:
                 new_name = names.replace("ReImport:", "")
                 cmds.rename(names, new_name)  # Rename the object
-    batch_playblast()
+    autosave_prefix_name_remover()
+
         
