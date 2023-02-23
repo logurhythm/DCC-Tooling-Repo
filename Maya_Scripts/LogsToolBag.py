@@ -5,7 +5,6 @@ from PySide2 import QtCore
 
 def main():
     class LogsToolBag():
-    
         def batch_fbx_export():
             """
             Exports a list of selected objects as FBX's to the current projects asset directory. Can do OBJ's also if that flag is set.
@@ -101,21 +100,23 @@ def main():
             cmds.setAttr("Fill_Light_Secondary.translate", -130, -20, 0)
             cmds.setAttr("Fill_Light_Secondary.scale", 40, 40, 450)
             cmds.setAttr("Fill_Light_Secondary.rotate", -260, 90, -60)
-        #create_photoshoot_set()
+        create_photoshoot_set()
 
         def get_bounding_box_center():
-            selection_list = cmds.ls(sl=True)
-            for selection in selection_list:
-                # Query the bounding box center
-                bbox_center = cmds.xform(query=True, boundingBox=True, worldSpace=True)
-
-                # Calculate the center point of the bounding box
-                center_point = [
-                    (bbox_center[0] + bbox_center[3]) / 2.0,
-                    (bbox_center[1] + bbox_center[4]) / 2.0,
-                    (bbox_center[2] + bbox_center[5]) / 2.0
-                ]
-                print(center_point)
+            """
+            Gets objects bounding box center. Use this to snap objects to the center of a selection. Need expand this to
+            vert selection for joint placement.
+            """
+            # Select the object you want to query
+            cmds.ls(sl=True)
+            bbox_center = cmds.xform(query=True, boundingBox=True, worldSpace=True)
+            # Calculate the center point of the bounding box
+            center_point = [
+                (bbox_center[0] + bbox_center[3]) / 2.0,
+                (bbox_center[1] + bbox_center[4]) / 2.0,
+                (bbox_center[2] + bbox_center[5]) / 2.0
+            ]
+            print(center_point)
         get_bounding_box_center()
 
         def get_radians():
@@ -128,6 +129,51 @@ def main():
             for x in orientation_mode:
                 print(math.degrees(x))
         get_radians()
+
+        def make_edges_equal():
+            def get_edge_length(edge):
+
+                if not cmds.selectPref(query=True, trackSelectionOrder=True):
+                    cmds.selectPref(trackSelectionOrder=True)
+                """
+                Getting the edge length of the 2 selected edges. The string for the edge selections needs to be
+                formated properly. Currently they will return something like this: pCube.e[#]. The string will need to be
+                stripped of the "." and index.
+
+                something to note here: edge is the element of the index that was passed into this function. A type check will
+                return unicode. But a string is what will be split. 
+
+                param: edge selection (list)
+                return: edge_length (list)
+                
+                """
+                print(edge) #Before Split
+                mesh_name = edge.split('.')[0]
+                related_verts = cmds.polyInfo(edge, edgeToVertex = True)[0].split(':')[-1].split(' ')
+                related_verts = [x for x in related_verts if x.isdigit()]
+                edge_length = get_distance('{0}.vtx[{1}]'.format(mesh_name, related_verts[0]), '{0}.vtx[{1}]'.format(mesh_name, related_verts[1]))
+                return edge_length
+                
+            def get_distance(point_a, point_b):
+                point_a_position = cmds.xform(point_a, query = True, worldSpace = True, translation = True)
+                point_b_position = cmds.xform(point_b, query = True, worldSpace = True, translation = True)
+                vector_result = [point_a_position[0] - point_b_position[0], point_a_position[1] - point_b_position[1], point_a_position[2] - point_b_position[2]]
+                squared_result = [x ** 2 for x in vector_result]
+                distance = math.sqrt(squared_result[0] + squared_result[1] + squared_result[2])
+                return distance
+
+            edges = cmds.ls(fl = True, os = True)
+
+            if edges:
+                edge_reference = edges[0]
+                edge_target = edges[1]
+                # get edge lengths
+                edge_reference_length = get_edge_length(edge_reference)
+                edge_target_length = get_edge_length(edge_target)
+                # scale correctly
+                scale_factor = edge_reference_length / edge_target_length
+                cmds.scale(scale_factor, scale_factor, scale_factor, edge_target, absolute = True, componentSpace = True)
+        make_edges_equal()
 
         def selection_on_point():
             """
@@ -201,8 +247,6 @@ def main():
                     new_name = names.replace("ReImport:", "")
                     cmds.rename(names, new_name)  # Rename the object
         autosave_prefix_name_remover()
-
-        
 
 if __name__ == '__main__':
     main()
