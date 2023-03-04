@@ -22,7 +22,7 @@ class main_window(QDialog):
         self.company_name = self.line_edit_creation("company_name", "Whats the Company Name?")
         self.intro = self.line_edit_creation("intro", "Intro")
         self.Body = self.line_edit_creation("body", "Body")
-        self.Conclusion = self.line_edit_creation("output_runtime_loc", "Output Runtime Location")
+        self.Conclusion = self.line_edit_creation("conclusion", "Conclusion")
         
         self.fp_btn_intro = QPushButton("...")
         self.fp_btn_body = QPushButton("...")
