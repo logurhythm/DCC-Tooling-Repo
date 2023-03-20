@@ -181,7 +181,6 @@ def make_edges_equal():
     except:
         om.MGlobal.displayError("No edges, or only one edge was selected. Select exactly 2")
         traceback.print_exc()
-make_edges_equal()
 
 
 def selection_on_point():
@@ -239,7 +238,7 @@ def batch_playblast():
     for objects in selected_objects:
         cmds.setAttr(objects+".visibility", 1)
 
-def autosave_prefix_name_remover():
+def autosave_prefix_name_remover(string_to_remove):
     """
     Takes list of selected objects from the outliner and parses from for the prefix append, like when maya crashes or autosaves and you load it into a new scene.
     This is still fairly manual, need to provide a input box for the user to specificy the prefix.
@@ -248,7 +247,7 @@ def autosave_prefix_name_remover():
     renameList = cmds.ls(selection = True)
     for names in renameList:
         print(names)
-        if "ReImport:" in names:
-            new_name = names.replace("ReImport:", "")
+        if string_to_remove in names:
+            new_name = names.replace(string_to_remove, "")
             cmds.rename(names, new_name)  # Rename the object
 
